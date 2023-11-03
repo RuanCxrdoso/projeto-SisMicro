@@ -5,4 +5,4 @@ Autores:
 - Ruan Cardoso
 - Mikelly Correia
 - Edilton Damasceno
-- Kelmer
+- Kelmer Passos

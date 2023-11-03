@@ -1,4 +1,4 @@
-# projeto-SisMicro
+# Projeto Semestral de Sistemas Microprocessados
 Instrumentação de um Robô Diferencial
 
 Autores:

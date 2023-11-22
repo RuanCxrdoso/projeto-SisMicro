@@ -32,22 +32,22 @@ void setup() { // Configurações iniciais
 	DDRD |= (1 << TRIG_PIN);
 	DDRD &= ~(1 << ECHO_PIN);
 
-	init_timer1();
 	sei(); // Habilita interrupções globais
+	init_timer1();
 }
 
 void loop() {
-	// Robô inicia andando para frente;
-	robo_frente();
+	send_pulse() // Envio do pulso no TRIG
 
-	float dist_cm = calculate_distance(); // Declara variável que armazena a distância do obstáculo;
+	float dist_cm = calculate_distance(); // calcula distância em cm;
 
-	if (dist_cm < 20) // distância menor que 20cm?;
-	{
+	while (dist_cm < 20) { // Enquanto a distancia for menor que 20cm, segue rotacionando e recalculando a distância.
 		decisao();
+		send_pulse();
+		dist_cm = calculate_distance()
 	}
 
-	_delay_ms(100);
+	robo_frente();
 }
 
 // Funções auxiliares
@@ -81,11 +81,12 @@ void send_pulse() {
 
 float calculate_distance() {
 	// Velocidade do som no ar a 20 graus Celsius (em metros por segundo);
-	float speed_of_sound = 343.0;
+	// float speed_of_sound = 343.0;
 	// Fator de conversão para transformar a largura do pulso em centímetros;
-	float conversion_factor = 100.0 / 2.0;  // Supondo que a largura do pulso está em microssegundos;
+	// float conversion_factor = 100.0 / 2.0;  // Supondo que a largura do pulso está em microssegundos;
 	// Calcula a distância usando a fórmula;
-	return (pulse_width / 2.0) * (speed_of_sound / 1000000.0) * conversion_factor;
+	// Fabricante do HCSR04 define que a distância em cm é time / 58, mais precisamente 58.82
+	return pulse_width / 58.82;
 }
 
 void robo_frente() {
@@ -102,13 +103,6 @@ void robo_esquerda() {
 	PORTD |= (1 << IN4);
 }
 
-void robo_direita() {
-	PORTD &= (1 << IN1);
-	PORTD |= ~(1 << IN2);
-	PORTD |= ~(1 << IN3);
-	PORTD &= (1 << IN4);
-}
-
 void robo_parado() {
 	PORTD &= ~(1 << IN1);
 	PORTD &= ~(1 << IN2);
@@ -119,9 +113,10 @@ void robo_parado() {
 void decisao() {
 	robo_parado();
 	_delay_ms(500);
+
 	robo_esquerda();
-	// Esse tempo precisa ser avaliado para que o robô vire por volta de 90 graus;
-	_delay_ms(400);
+	_delay_ms(400); 	// Esse tempo precisa ser avaliado para que o robô vire por volta de 90 graus;
+
 	robo_parado();
 	_delay_ms(500);
 }
@@ -133,11 +128,11 @@ ISR(TIMER1_CAPT_vect) {
 	if (TCCR1B & (1 << ICES1)) {
 		// borda de subida detectado;
 		start_time = ICR1; // Salva o tempo de início do pulso;
-		TCCR1B &= ~(1 << ICES1); // Muda para captura no flanco de descida;
+		TCCR1B &= ~(1 << ICES1); // Muda para captura no borda de descida;
 		} else {
-		// Flanco de descida detectado;
+		// Borda de descida detectado;
 		uint16_t end_time = ICR1; // Salva o tempo de término do pulso;
-		pulse_width = end_time - start_time; // Calcula a largura do pulso em microssegundos;
-		TCCR1B |= (1 << ICES1); // Muda de volta para captura no flanco de subida;
+		pulse_width = end_time - start_time; // Calcula a largura do pulso ECHO em microssegundos;
+		TCCR1B |= (1 << ICES1); // Muda de volta para captura no borda de subida;
 	}
 }

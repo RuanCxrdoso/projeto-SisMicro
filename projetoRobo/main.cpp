@@ -9,43 +9,37 @@
 	
  */ 
 
+#define F_CPU 16000000UL
+
 #include <avr/io.h>
-#include <util/delay.h> // lib for delays (we can use the timer maybe)
+#include <util/delay.h>
 
-#define F_CPU 16000000UL // Clock frequency in Hz
-#define SOUND_SPEED // Sound speed in m/s
+#define TRIG_PIN PB0 // PINO 8 ARDUINO
+#define ECHO_PIN PB1 // PINO 9 ARDUINO
 
-void setup() 
-{
-	DDRB |= (1 << DDB1) // SETA O SEGUNDO BIT DO PORTB COMO SAIDA (TRIG)
-	DDRD &= ~(1 << DDD2) // SETA O TERCEIRO BIT DO PORTD COMO ENTRADA (ECHO)
-}
+long tempo, distancia;
 
-unsigned int measureDistance() // Fun��o para medi��o de dist�ncia do sensor ultrass�nico
-{ 
-	    PORTB |= (1 << PORTB1); // Gera pulso de 10 microssegundos no pino TRIG
-	    _delay_us(10);
-	    PORTB &= ~(1 << PORTB1);
+int main(void) {
+	DDRB |= (1 << TRIG_PIN); // PINO TRIG COMO OUTPUT
+	DDRB &= ~(1 << ECHO_PIN); // PINO ECHO COMO INPUT
 
-	    while (!(PIND & (1 << PIND2))) // Aguarda o pulso de resposta no pino ECHO (! inverte a logica)
-	    ;
+	PORTB &= ~((1 << TRIG_PIN) | (1 << ECHO_PIN)); // Inicia ECHO e TRIG como nível lógico baixo
 
-	    // Inicia o Timer1
-	    TCCR1B |= (1 << CS11); // Prescaler 8
-
-	    // Aguarda a borda de subida no pino ECHO
-	    while (PIND & (1 << PIND2))
-	    ;
-
-	    // Desliga o Timer1
-	    TCCR1B = 0;
-
-	    // Calcula a dist�ncia em cent�metros
-	    return (TCNT1 * SOUND_SPEED) / (2 * 8 * F_CPU / 1000000);
-}
-
-int main(void)
-{
-    /* Replace with your application code */
+	TCCR1A = 0x00;
+	TCCR1B |= ((1 << CS11) & (1 << CS10)); // Ajusta o prescaler em 1:64 -> (64 / 16mHz) * 1m = 4ms
+	
+	while(1) {
+		// Envio do pulso de 10ms no pino TRIG
+		PORTB |= (1 << TRIG_PIN);
+		_delay_us(10);
+		PORTB &= ~(1 << TRIG_PIN);
+		
+		while((PINB & (1 << ECHO_PIN)) == 0); // Não avança enquanto o ECHO estiver em nível lógico baixo
+		TCNT1 = 0; // Inicia a contagem quando o ECHO sobre para nível lógico alto
+		while(PINB & (1 << ECHO_PIN)); // Não avança enquanto o ECHO estiver em nível lógico alto
+		
+		tempo = TCNT1 * 4.0; // Converte em microssegundos
+		distancia = tempo / 58.0; // Converte tempo em distância em centímetros
+	}
 }
 

@@ -15,14 +15,13 @@
 #define TRIG_PIN 4 // PC4
 #define ECHO_PIN 5 // PC5
 
-long tempo, distancia;
-float dist_cm;
+long tempo, distancia, dist_cm;
 
 void init() { // Configurações iniciais
 	// Sensor ultrassônico
 	DDRC |= (1 << TRIG_PIN);	// Pino TRIG como saída
 	DDRC &= ~(1 << ECHO_PIN);	// Pino de input para leitura do ECHO
-	PORTC |= (1 << PORTC5);		// Habilita pull up no pino PC5
+	PORTC |= (1 << ECHO_PIN);		// Habilita pull up no pino PC5/ECHO
 	PORTC &= ~(1 << TRIG_PIN);// Inicia o TRIG como baixo
 
 	TCNT1 = 0;								// Valor inicial do Timer1

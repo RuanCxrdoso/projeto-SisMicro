@@ -42,8 +42,8 @@ void init() {
 }
 
 void set_PWM(int dutyCycleA, int dutyCycleB) {
-    OCR0A = dutyCycleA;
-    OCR0B = dutyCycleB;
+    OCR0A = dutyCycleA;                    //Define o valor do registrador OCR0A (Output Compare Register A) com o valor de "dutyCycleA"
+    OCR0B = dutyCycleB;                   //Define o valor do registrador OCR0B (Output Compare Register B) com o valor de "dutyCycleB"
 }
 
 void robot_left() {

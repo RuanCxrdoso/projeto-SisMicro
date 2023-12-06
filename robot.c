@@ -48,10 +48,10 @@ void set_PWM(int dutyCycleA, int dutyCycleB) {
 
 void robot_left() {
 	set_PWM(51, 51); // 20% de PWM
-	PORTD &= ~(1 << IN1);
-	PORTD |= (1 << IN2);
-	PORTD |= (1 << IN3);
-	PORTD &= ~(1 << IN4);
+	PORTD &= ~(1 << IN1);  //Coloca em zero o bit associado ao pino IN1 no registrador PORTD
+	PORTD |= (1 << IN2);  //Coloca em um o bit associado ao pino IN2 no registrador PORTD
+	PORTD |= (1 << IN3);  //Coloca em um o bit associado ao pino IN3 no registrador PORTD
+	PORTD &= ~(1 << IN4); //Coloca em zero o bit associado ao pino IN4 no registrador PORTD
 }
 
 void robot_forward() {

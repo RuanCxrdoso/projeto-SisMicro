@@ -55,14 +55,14 @@ void robot_left() {
 }
 
 void robot_forward() {
-	set_PWM(128, 128);
-	PORTD |= (1 << IN1);
-	PORTD &= ~(1 << IN2);
-	PORTD |= (1 << IN3);
-	PORTD &= ~(1 << IN4);
+	set_PWM(128, 128); // 50% de PWM
+	PORTD |= (1 << IN1);  // Define o bit associado ao pino IN1 como 1 (alto)
+	PORTD &= ~(1 << IN2); // Limpa o bit associado ao pino IN2 (coloca como 0)
+	PORTD |= (1 << IN3);  // Define o bit associado ao pino IN3 como 1 (alto)
+	PORTD &= ~(1 << IN4); // Limpa o bit associado ao pino IN4 (coloca como 0)
 }
 
-/*******************************************MAIN PROGRAM*******************************************/
+/*******************************************PROGRAMA PRINCIPAL*******************************************/
 int main() {
 	init();
 	while (1) {;

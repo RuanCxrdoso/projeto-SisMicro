@@ -47,12 +47,12 @@ ISR(PCINT1_vect) {
 		long numuS = TCNT1/2;					// Save Timer value
 		uint8_t oldSREG = SREG;
 		cli();
-        long distancia = numuS/58;
+		long distancia = numuS/58;
 		SREG = oldSREG;							// Enable interrupts
-        if (distancia < 30){
-            PORTD |= (1 << PORTD5);
-        } else {
-            PORTD &= ~(1 << PORTD5);
-        }
+		if (distancia < 30){
+				PORTD |= (1 << PORTD5);
+		} else {
+				PORTD &= ~(1 << PORTD5);
+		}
 	}
 }

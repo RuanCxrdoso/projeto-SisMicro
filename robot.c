@@ -26,8 +26,12 @@ void init() { // Configurações iniciais
 	PORTC &= ~(1 << TRIG_PIN);// Inicia o TRIG como baixo
 
 	TCNT1 = 0;								// Valor inicial do Timer1
-	TCCR1B |= (1<<CS10);			// Timer without prescaller. Since default clock for atmega328p is 1Mhz period is 1uS
-	TCCR1B |= (1<<ICES1);			// First capture on rising edge
+	TCCR1B |= (1<<CS11);			// Prescaller em 1:8
+	TCCR1B |= (1<<ICES1);			// Primeira captura na borda de subida
+
+	PCICR = (1 << PCIE1);			// Habilita interrupção por mudança
+	PCMSK1 = (1 << PCINT13);	// Habilita a interrupção por mudança no PC5
+	sei(); // Habilita interrupções globais
 
 	// Pinos de saída para a ponte H
 	DDRD |= (1 << ENA) | (1 << ENB) | (1 << IN1) | (1 << IN2) | (1 << IN3) | (1 << IN4);
@@ -68,13 +72,11 @@ float distance() {
 	_delay_us(10);
 	PORTB &= ~(1 << TRIG_PIN);
 	
-	while((PINB & (1 << ECHO_PIN)) == 0); // Aguarda o sinal do ECHO ir para 1
-	TCNT1 = 0; // Inicia a contagem quando o ECHO sobe para 1
-	while(PINB & (1 << ECHO_PIN)); // Aguarda o sinal do ECHO ir para 0
-	
-	tempo = TCNT1 * 4.0;
-	distancia = tempo / 58.0;
-
+	// while((PINB & (1 << ECHO_PIN)) == 0); // Aguarda o sinal do ECHO ir para 1
+	// TCNT1 = 0; // Inicia a contagem quando o ECHO sobe para 1
+	// while(PINB & (1 << ECHO_PIN)); // Aguarda o sinal do ECHO ir para 0
+	// tempo = TCNT1 * 4.0;
+	// distancia = tempo / 58.0;
 	return distancia;
 }
 
@@ -102,7 +104,19 @@ void robot_stop() {
 	PORTD &= ~(1 << IN4);
 }
 
-  // DDRB |= (1 << TRIG_PIN); // PINO TRIG COMO OUTPUT
-  // DDRB &= ~(1 << ECHO_PIN); // PINO ECHO COMO INPUT
-	// PORTB &= ~((1 << TRIG_PIN) | (1 << ECHO_PIN)); // ECHO & TRIG == 0
-	// TCCR1B |= ((1 << CS11) & (1 << CS10)); // Ajusta o prescaler em 1:64 -> (64 / 16mHz) * 1m = 4ms
+ISR(PCINT1_vect) {
+	if (bit_is_set(PINC,PC5)) {	// Se o ECHO está em 1
+		TCNT1 = 0;								// Reseta o timer
+	} else { 										// Se o ECHO está em 0
+		long numuS = TCNT1/2;			// Salva o valor do timer
+		uint8_t oldSREG = SREG;
+		cli();										// Limpa a flag de interrupção globais
+		distancia = numuS/58;
+		SREG = oldSREG;
+	}
+}
+
+// DDRB |= (1 << TRIG_PIN); // PINO TRIG COMO OUTPUT
+// DDRB &= ~(1 << ECHO_PIN); // PINO ECHO COMO INPUT
+// PORTB &= ~((1 << TRIG_PIN) | (1 << ECHO_PIN)); // ECHO & TRIG == 0
+// TCCR1B |= ((1 << CS11) & (1 << CS10)); // Ajusta o prescaler em 1:64 -> (64 / 16mHz) * 1m = 4ms

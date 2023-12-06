@@ -18,7 +18,7 @@
 #include <avr/interrupt.h>
 
 
-/*******************************************INITALIZE PORTS, TIMER, AND INTURRUPTS*******************************************/
+/*******************************************INICIALIZAÇÃO DAS PORTAS, DOS TIMERS E DOS REGISTRADORES*******************************************/
 void init() {
     DDRC |= (1<<DDC4);							// Todos os pinos do Port C configurados como saída. PC0: RW   PC1: RS   PC2: E;
 	DDRC &= ~(1<<DDC5);						// Define o Pino C5 como entrada para leitura do Echo

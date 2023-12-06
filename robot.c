@@ -4,92 +4,93 @@
 
 #define F_CPU 16000000UL // Frequencia de clock do ATmega328P 16mHz
 
-#define IN1 7 // pino de controle da ponte H (PD7)
-#define IN2 6 // pino de controle da ponte H (PD6)
-#define IN3 5 // pino de controle da ponte H (PD5)
+#define IN1 1 // pino de controle da ponte H (PD1)
+#define IN2 2 // pino de controle da ponte H (PD2)
+#define IN3 3 // pino de controle da ponte H (PD3)
 #define IN4 4 // pino de controle da ponte H (PD4)
 
-#define ENA 9 // Pinos de controle de velocidade usando o PWM para motor esquerdo (PB1)
-#define ENB 10 // Pinos de controle de velocidade usando o PWM para motor direito (PB2)
+#define ENA 5 // Pinos de controle de velocidade usando o PWM para motor esquerdo (PD5)
+#define ENB 6 // Pinos de controle de velocidade usando o PWM para motor direito (PD6)
 
+#define TRIG_PIN 8 // PB0
+#define ECHO_PIN 9 // PB1
 
-volatile uint16_t pulse_width = 0; // variável volátil (pode ter seu valor alterado a qualquer momento no programa) para largura de pulso
+long tempo, distancia;
+float dist_cm;
 
 int main(void) { // Configurações iniciais
-	// Configuração dos pinos dos motores
-	DDRD |= (1 << IN1) | (1 << IN2) | (1 << IN3) | (1 << IN4); // Seta todos os 4 pinos de controle da ponte H como saída (output)
-	// Configuração dos pinos de controle de velocidade
-	DDRD |= (1 << ENA) | (1 << ENB); // Seta ambos os pinos como saída (output)
+	// Sensor ultrassônico
+  DDRB |= (1 << TRIG_PIN); // PINO TRIG COMO OUTPUT
+  DDRB &= ~(1 << ECHO_PIN); // PINO ECHO COMO INPUT
+	PORTB &= ~((1 << TRIG_PIN) | (1 << ECHO_PIN)); // ECHO & TRIG == 0
+	TCCR1B |= ((1 << CS11) & (1 << CS10)); // Ajusta o prescaler em 1:64 -> (64 / 16mHz) * 1m = 4ms
 
-	init_PWM();
-	set_PWM(120, 120);
+	// Pinos de saída para a ponte H
+	DDRD |= (1 << ENA) | (1 << ENB) | (1 << IN1) | (1 << IN2) | (1 << IN3) | (1 << IN4);
 
-	sei(); // Habilita interrupções globais
-	init_timer1();
+	// PWM
+	TCCR0A |= (1 << COM0A1) | (1 << COM0B1) | (1 << WGM01) | (1 << WGM00);
+	TCCR0B |= (1 << CS01) | (1 << CS00); // Prescaler	
+	OCR0A = 0; // PWM PARA O PINO ENA DA PONTE H
+	OCR0B = 0; // PWM PARA O PINO ENB DA PONTE H
+
+	robot_stop();
 
 	while(1) {
+		dist_cm = distance();
 
-	float dist_cm = calculate_distance(); // calcula distância em cm;
+		while (dist_cm < 20) { // Enquanto a distancia for menor que 20cm, segue rotacionando e recalculando a distância.
+			robot_left();
+			_delay_ms(100);
+			robot_stop();
+			dist_cm = distance();
+		}
 
-	while (dist_cm < 20) { // Enquanto a distancia for menor que 20cm, segue rotacionando e recalculando a distância.
-		decisao();
-		dist_cm = calculate_distance() // Pegar a distancia do sensor.c
+		robot_forward();
 	}
-
-	robo_frente();
-	}
 }
 
-// Funções auxiliares
-
-void init_PWM() {
-	// Configuração do Timer/Counter1 para PWM;
-	TCCR1A |= (1 << COM1A1) | (1 << COM1B1) | (1 << WGM10); // COM1A1 COM1B1 configurado para limpar OC1A e OC1B quando a comparação da um 'match' durante a contagem.
-	TCCR1B |= (1 << CS11) | (1 << WGM12); // CS11 configura o prescaler para 1:8 // WGM10 E WGM12 configuram o modo de operação do Timer/counter como modo 5, fast PWM de 8 bits.
-	// Configuração dos pinos de saída para os canais A e B;
-	DDRB |= (1 << ENA) | (1 << ENB);
+void set_PWM(int dutyCycleA, int dutyCycleB) {
+		OCR0A = dutyCycleA;
+		OCR0B = dutyCycleB;
 }
 
-void set_PWM(uint8_t duty_cycle_A, uint8_t duty_cycle_B) { // valor como (128, 128) indica 50% de duty cicle em ambos os canais
-	// Configuração do ciclo de trabalho para os canais A e B;
-	OCR1A = duty_cycle_A; // ciclo de trabalho (clock em nível alto) de 0 a 255
-	OCR1B = duty_cycle_B; // ciclo de trabalho (clock em nível alto) de 0 a 255
+float distance() {
+	// Envio do pulso no pino TRIG
+	PORTB |= (1 << TRIG_PIN);
+	_delay_us(10);
+	PORTB &= ~(1 << TRIG_PIN);
+	
+	while((PINB & (1 << ECHO_PIN)) == 0); // Aguarda o sinal do ECHO ir para 1
+	TCNT1 = 0; // Inicia a contagem quando o ECHO sobe para 1
+	while(PINB & (1 << ECHO_PIN)); // Aguarda o sinal do ECHO ir para 0
+	
+	tempo = TCNT1 * 4.0;
+	distancia = tempo / 58.0;
+
+	return distancia;
 }
 
-void init_timer1() {
-	// Configura o Timer1 para capturar o tempo de pulso;
-	TCCR1B |= (1 << ICES1); // Configuração para captura na borda de subida (rising edge);
-	TIMSK1 |= (1 << ICIE1); // Ativa a interrupção quando ocorre a captura de pulso;
-}
-
-void robo_frente() {
+void robot_forward() {
+	set_PWM(128, 128);
 	PORTD |= (1 << IN1);
 	PORTD &= ~(1 << IN2);
 	PORTD |= (1 << IN3);
 	PORTD &= ~(1 << IN4);
 }
 
-void robo_esquerda() {
-	PORTD |= (1 << IN1);
-	PORTD &= ~(1 << IN2);
-	PORTD &= ~(1 << IN3);
-	PORTD |= (1 << IN4);
+void robot_left() {
+	set_PWM(51, 51); // 20% de PWM
+	PORTD &= ~(1 << IN1);
+	PORTD |= (1 << IN2);
+	PORTD |= (1 << IN3);
+	PORTD &= ~(1 << IN4);
 }
 
-void robo_parado() {
+void robot_stop() {
+	set_PWM(0, 0);
 	PORTD &= ~(1 << IN1);
 	PORTD &= ~(1 << IN2);
 	PORTD &= ~(1 << IN3);
 	PORTD &= ~(1 << IN4);
-}
-
-void decisao() {
-	robo_parado();
-	_delay_ms(500);
-
-	robo_esquerda();
-	_delay_ms(400); 	// Esse tempo precisa ser avaliado para que o robô vire por volta de 90 graus;
-
-	robo_parado();
-	_delay_ms(500);
 }

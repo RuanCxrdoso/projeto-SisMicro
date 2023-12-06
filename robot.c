@@ -20,10 +20,10 @@
 
 /*******************************************INITALIZE PORTS, TIMER, AND INTURRUPTS*******************************************/
 void init() {
-    DDRC |= (1<<DDC4);							// Port C all output. PC0: RW		PC1: RS		PC2: E;
-	DDRC &= ~(1<<DDC5);						// Set Pin C5 as input to read Echo
-	PORTC |= (1<<PORTC5);					// Enable pull up on C5
-	PORTC &= ~(1<<PC4);						// Init C4 as low (trigger)
+    DDRC |= (1<<DDC4);							// Todos os pinos do Port C configurados como saída. PC0: RW   PC1: RS   PC2: E;
+	DDRC &= ~(1<<DDC5);						// Define o Pino C5 como entrada para leitura do Echo
+	PORTC |= (1<<PORTC5);					       // Ativa o pull-up em C5
+	PORTC &= ~(1<<PC4);					       // Inicializa C4 em nível baixo (trigger)
 
 	PRR &= ~(1<<PRTIM1);					// To activate timer1 module;
 	TCNT1 = 0;								// Initial timer value

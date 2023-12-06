@@ -25,19 +25,19 @@ void init() {
 	PORTC |= (1<<PORTC5);					       // Ativa o pull-up em C5
 	PORTC &= ~(1<<PC4);					       // Inicializa C4 em nível baixo (trigger)
 
-	PRR &= ~(1<<PRTIM1);					// To activate timer1 module;
-	TCNT1 = 0;								// Initial timer value
-	TCCR1B |= (1<<CS11);					// Timer without prescaller. Since default clock for atmega328p is 1Mhz period is 1uS
-	TCCR1B |= (1<<ICES1);					// First capture on rising edge
+	PRR &= ~(1<<PRTIM1);					//  Para ativar o módulo do timer1;
+	TCNT1 = 0;						// Valor inicial do timer
+	TCCR1B |= (1<<CS11);					// Timer sem prescaler. Como o clock padrão para o atmega328p é 1Mhz, o período é 1uS
+	TCCR1B |= (1<<ICES1);					// Captura inicial na borda de subida
 
-	PCICR = (1<<PCIE1);						// Enable PCINT[14:8] we use pin C5 which is PCINT13
-	PCMSK1 = (1<<PCINT13);					// Enable C5 interrupt
+	PCICR = (1<<PCIE1);						// Habilita PCINT[14:8], usamos o pino C5 que é PCINT13
+	PCMSK1 = (1<<PCINT13);					//Habilita a interrupção em C5
 	
     DDRD |= (1 << ENA) | (1 << ENB);
     TCCR0A |= (1 << COM0A1) | (1 << COM0B1) | (1 << WGM01) | (1 << WGM00);
 	TCCR0B |= (1 << CS01) | (1 << CS00);
     robot_forward();
-    sei();									// Enable Global Interrupts
+    sei();									// Habilita a interrupção global
     
 }
 

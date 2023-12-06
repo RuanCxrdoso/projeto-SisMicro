@@ -12,18 +12,22 @@
 #define ENA 5 // Pinos de controle de velocidade usando o PWM para motor esquerdo (PD5)
 #define ENB 6 // Pinos de controle de velocidade usando o PWM para motor direito (PD6)
 
-#define TRIG_PIN 8 // PB0
-#define ECHO_PIN 9 // PB1
+#define TRIG_PIN 4 // PC4
+#define ECHO_PIN 5 // PC5
 
 long tempo, distancia;
 float dist_cm;
 
-int main(void) { // Configurações iniciais
+void init() { // Configurações iniciais
 	// Sensor ultrassônico
-  DDRB |= (1 << TRIG_PIN); // PINO TRIG COMO OUTPUT
-  DDRB &= ~(1 << ECHO_PIN); // PINO ECHO COMO INPUT
-	PORTB &= ~((1 << TRIG_PIN) | (1 << ECHO_PIN)); // ECHO & TRIG == 0
-	TCCR1B |= ((1 << CS11) & (1 << CS10)); // Ajusta o prescaler em 1:64 -> (64 / 16mHz) * 1m = 4ms
+	DDRC |= (1 << TRIG_PIN);	// Pino TRIG como saída
+	DDRC &= ~(1 << ECHO_PIN);	// Pino de input para leitura do ECHO
+	PORTC |= (1 << PORTC5);		// Habilita pull up no pino PC5
+	PORTC &= ~(1 << TRIG_PIN);// Inicia o TRIG como baixo
+
+	TCNT1 = 0;								// Valor inicial do Timer1
+	TCCR1B |= (1<<CS10);			// Timer without prescaller. Since default clock for atmega328p is 1Mhz period is 1uS
+	TCCR1B |= (1<<ICES1);			// First capture on rising edge
 
 	// Pinos de saída para a ponte H
 	DDRD |= (1 << ENA) | (1 << ENB) | (1 << IN1) | (1 << IN2) | (1 << IN3) | (1 << IN4);
@@ -33,7 +37,10 @@ int main(void) { // Configurações iniciais
 	TCCR0B |= (1 << CS01) | (1 << CS00); // Prescaler	
 	OCR0A = 0; // PWM PARA O PINO ENA DA PONTE H
 	OCR0B = 0; // PWM PARA O PINO ENB DA PONTE H
+}
 
+int main(void) { 
+	init();
 	robot_stop();
 
 	while(1) {
@@ -94,3 +101,8 @@ void robot_stop() {
 	PORTD &= ~(1 << IN3);
 	PORTD &= ~(1 << IN4);
 }
+
+  // DDRB |= (1 << TRIG_PIN); // PINO TRIG COMO OUTPUT
+  // DDRB &= ~(1 << ECHO_PIN); // PINO ECHO COMO INPUT
+	// PORTB &= ~((1 << TRIG_PIN) | (1 << ECHO_PIN)); // ECHO & TRIG == 0
+	// TCCR1B |= ((1 << CS11) & (1 << CS10)); // Ajusta o prescaler em 1:64 -> (64 / 16mHz) * 1m = 4ms

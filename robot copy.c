@@ -9,17 +9,16 @@
 #define IN3 5 // pino de controle da ponte H (PD5)
 #define IN4 4 // pino de controle da ponte H (PD4)
 
-#define ENA 9 // Pinos de controle de velocidade usando o PWM para motor esquerdo (PB1)
-#define ENB 10 // Pinos de controle de velocidade usando o PWM para motor direito (PB2)
+#define ENA 9 // Pinos de controle de velocidade usando o PWM para motor esquerdo (PB1 - OC1A)
+#define ENB 10 // Pinos de controle de velocidade usando o PWM para motor direito (PB2 - OC1B)
 
 
 volatile uint16_t pulse_width = 0; // variável volátil (pode ter seu valor alterado a qualquer momento no programa) para largura de pulso
 
 int main(void) { // Configurações iniciais
-	// Configuração dos pinos dos motores
+	// Configuração dos pinos para a ponte H
 	DDRD |= (1 << IN1) | (1 << IN2) | (1 << IN3) | (1 << IN4); // Seta todos os 4 pinos de controle da ponte H como saída (output)
-	// Configuração dos pinos de controle de velocidade
-	DDRD |= (1 << ENA) | (1 << ENB); // Seta ambos os pinos como saída (output)
+	DDRB |= (1 << ENA) | (1 << ENB); // Seta ambos os pinos de controle de velocidade como saída (output)
 
 	init_PWM();
 	set_PWM(120, 120);
@@ -47,19 +46,18 @@ void init_PWM() {
 	TCCR1A |= (1 << COM1A1) | (1 << COM1B1) | (1 << WGM10); // COM1A1 COM1B1 configurado para limpar OC1A e OC1B quando a comparação da um 'match' durante a contagem.
 	TCCR1B |= (1 << CS11) | (1 << WGM12); // CS11 configura o prescaler para 1:8 // WGM10 E WGM12 configuram o modo de operação do Timer/counter como modo 5, fast PWM de 8 bits.
 	// Configuração dos pinos de saída para os canais A e B;
-	DDRB |= (1 << ENA) | (1 << ENB);
 }
 
 void set_PWM(uint8_t duty_cycle_A, uint8_t duty_cycle_B) { // valor como (128, 128) indica 50% de duty cicle em ambos os canais
 	// Configuração do ciclo de trabalho para os canais A e B;
-	OCR1A = duty_cycle_A; // ciclo de trabalho (clock em nível alto) de 0 a 255
-	OCR1B = duty_cycle_B; // ciclo de trabalho (clock em nível alto) de 0 a 255
+	OCR1A = duty_cycle_A; // ciclo de trabalho de 0 a 255
+	OCR1B = duty_cycle_B; // ciclo de trabalho de 0 a 255
 }
 
 void init_timer1() {
 	// Configura o Timer1 para capturar o tempo de pulso;
 	TCCR1B |= (1 << ICES1); // Configuração para captura na borda de subida (rising edge);
-	TIMSK1 |= (1 << ICIE1); // Ativa a interrupção quando ocorre a captura de pulso;
+	TIMSK1 |= (1 << ICIE1) | (1 << OCIE1B) | (1 << OCIE1A); // Ativa a interrupção quando ocorre a captura de pulso / Ativa interrupção por comparação de A e B.
 }
 
 void robo_frente() {

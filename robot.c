@@ -17,6 +17,10 @@
 
 long tempo, distancia, dist_cm;
 
+void robot_forward(void);
+void robot_left(void);
+void robot_stop(void);
+
 void init() { // Configurações iniciais
 	// Sensor ultrassônico
 	DDRC |= (1 << TRIG_PIN);	// Pino TRIG como saída
@@ -65,7 +69,7 @@ void set_PWM(int dutyCycleA, int dutyCycleB) {
 		OCR0B = dutyCycleB;
 }
 
-float distance() {
+long distance() {
 	// Envio do pulso no pino TRIG
 	PORTB |= (1 << TRIG_PIN);
 	_delay_us(10);

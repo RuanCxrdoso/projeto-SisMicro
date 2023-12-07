@@ -1,9 +1,9 @@
 /*
  *   
  *      Programa usando a ATMega328p MCU para consulta ao sensor ultrassonico HC-SR04. 
- *      Pin placement of ATMega328p:
- *      Pin PC4				HC-SR04 Trig
- *      Pin PC5				HC-SR04 Echo
+ *      Escolha dos pinos do ATMega328p:
+ *      Pino PC4				HC-SR04 Trig
+ *      Pino PC5				HC-SR04 Echo
  */                             
 #define F_CPU 16000000UL
 

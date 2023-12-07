@@ -1,0 +1,43 @@
+<circuit version="1.0.0-SR1" rev="1402" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="0" >
+
+<item itemtype="Subcircuit" CircId="Uno-2" mainComp="false" Show_id="true" Show_Val="false" Pos="296,432" rotation="0" hflip="1" vflip="1" label="Uno-2" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Logic_Symbol="false">
+<mainCompProps itemtype="MCU" CircId="2_mega328-109" mainComp="true" Show_id="false" Show_Val="false" Pos="20,20" rotation="0" hflip="1" vflip="1" label="2_mega328-109" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" varList="TCNT1H/0x0085/uint8,TCNT1H/0x0085/uint8,TCNT1L/0x0084/uint8" Frequency="16 MHz" Program="../../../MPLABXProjects/Robo2.X/dist/default/production/Robo2.X.production.hex" Auto_Load="false" Rst_enabled="true" Ext_Osc="true" Wdt_enabled="false" />
+</item>
+
+<item itemtype="Subcircuit" CircId="L293-119" mainComp="false" Show_id="true" Show_Val="false" Pos="544,476" rotation="0" hflip="1" vflip="1" label="L293-119" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Logic_Symbol="true" />
+
+<item itemtype="DcMotor" CircId="DcMotor-120" mainComp="false" Show_id="true" Show_Val="false" Pos="676,444" rotation="0" hflip="1" vflip="1" label="DcMotor-120" idLabPos="-22,-48" labelrot="0" valLabPos="-14,36" valLabRot="0" RPM_Nominal="60 _RPM" Volt_Nominal="5 V" Resistance="100 Ω" />
+
+<item itemtype="DcMotor" CircId="DcMotor-121" mainComp="false" Show_id="true" Show_Val="false" Pos="676,564" rotation="0" hflip="1" vflip="1" label="DcMotor-121" idLabPos="-22,-48" labelrot="0" valLabPos="-14,36" valLabRot="0" RPM_Nominal="60 _RPM" Volt_Nominal="5 V" Resistance="100 Ω" />
+
+<item itemtype="SR04" CircId="SR04-126" mainComp="false" Show_id="false" Show_Val="false" Pos="372,344" rotation="0" hflip="1" vflip="1" label="SR04-126" idLabPos="-16,-48" labelrot="0" valLabPos="-16,20" valLabRot="0" />
+
+<item itemtype="Voltage Source" CircId="Voltage Source-128" mainComp="false" ShowProp="MaxValue" Show_id="false" Show_Val="true" Pos="216,304" rotation="0" hflip="1" vflip="1" label="Voltage Source-128" idLabPos="-32,-48" labelrot="0" valLabPos="-8,30" valLabRot="0" Running="true" Value_Volt="3.21 V" MaxValue="5 V" />
+
+<item itemtype="Connector" uid="connector-129" startpinid="DcMotor-120-lPin" endpinid="L293-119-1Y" pointList="636,444,604,444,604,484,584,484" />
+
+<item itemtype="Connector" uid="connector-130" startpinid="L293-119-2Y" endpinid="DcMotor-120-rPin" pointList="584,492,716,492,716,444" />
+
+<item itemtype="Connector" uid="connector-131" startpinid="L293-119-3Y" endpinid="DcMotor-121-lPin" pointList="584,516,636,516,636,564" />
+
+<item itemtype="Connector" uid="connector-132" startpinid="Voltage Source-128-outPin" endpinid="SR04-126-inpin" pointList="244,320,284,320" />
+
+<item itemtype="Connector" uid="connector-133" startpinid="SR04-126-outpin" endpinid="Uno-2-A5" pointList="380,392,472,392,472,448,448,448" />
+
+<item itemtype="Connector" uid="connector-134" startpinid="SR04-126-trigpin" endpinid="Uno-2-A4" pointList="372,392,372,404,464,404,464,456,448,456" />
+
+<item itemtype="Connector" uid="connector-135" startpinid="Uno-2-1" endpinid="L293-119-1A" pointList="304,456,284,456,284,656,464,656,464,484,536,484" />
+
+<item itemtype="Connector" uid="connector-136" startpinid="Uno-2-2" endpinid="L293-119-2A" pointList="304,464,272,464,272,664,472,664,472,492,536,492" />
+
+<item itemtype="Connector" uid="connector-137" startpinid="Uno-2-3" endpinid="L293-119-3A" pointList="304,472,260,472,260,668,484,668,484,516,536,516" />
+
+<item itemtype="Connector" uid="connector-138" startpinid="Uno-2-4" endpinid="L293-119-4A" pointList="304,480,252,480,252,672,496,672,496,524,536,524" />
+
+<item itemtype="Connector" uid="connector-139" startpinid="Uno-2-5" endpinid="L293-119-12EN" pointList="304,488,232,488,232,684,508,684,508,500,536,500" />
+
+<item itemtype="Connector" uid="connector-140" startpinid="Uno-2-6" endpinid="L293-119-34EN" pointList="304,496,220,496,220,692,516,692,516,532,536,532" />
+
+<item itemtype="Connector" uid="connector-141" startpinid="L293-119-4Y" endpinid="DcMotor-121-rPin" pointList="584,524,584,604,716,604,716,564" />
+
+</circuit>

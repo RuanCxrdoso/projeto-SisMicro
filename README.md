@@ -6,3 +6,5 @@ Autores:
 - Mikelly Correia
 - Edilton Damasceno
 - Kelmer Passos
+
+OBS: Os arquivos .sim1 são para o simulador Simulide

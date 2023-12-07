@@ -10,7 +10,6 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-#define F_CPU 16000000UL
 
 #define ENA 5 // Pinos de controle de velocidade usando o PWM para motor esquerdo (PB1 - OC1A)
 #define ENB 6 // Pinos de controle de velocidade usando o PWM para motor esquerdo (PB2 - OC1B)

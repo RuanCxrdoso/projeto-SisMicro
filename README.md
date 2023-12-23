@@ -1,6 +1,6 @@
 # Projeto de Sistemas Microprocessados - Universidade Federal da Bahia 📚
 
-![Project Logo](./public/preview.png)
+![Project Logo](./public/preview1.jpg)
 # Instrumentação de um Robô Diferencial 🤖
 
 > ## Descrição 📚
@@ -71,7 +71,8 @@ Foram utilizadas as seguintes tecnologias neste projeto:
 <br>
 
 > ## Printscreen do Projeto 📸
-![Project Interface](./public/nlwia.png)
+## Esquema exemplo do Circuito
+![Project Logo](./public/preview2.jpg)
 
 <br>
 <br>

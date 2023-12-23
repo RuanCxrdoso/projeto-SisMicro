@@ -77,9 +77,9 @@ Foram utilizadas as seguintes tecnologias neste projeto:
 <br>
 
 > ## Autores 📝
-+ <a href="https://www.linkedin.com/in/ruancardosolinkdin/" target="_blank">Ruan Cardoso</a>
-+ [Mikelly Correia](https://www.linkedin.com/in/ruancardosolinkdin/)
-+ [Edilton Damasceno](https://www.linkedin.com/in/ruancardosolinkdin/)
-+ [Kelmer Passos](https://www.linkedin.com/in/ruancardosolinkdin/)
++ [Ruan Cardoso](https://www.linkedin.com/in/ruancardosolinkdin/)
++ [Mikelly Correia](https://www.linkedin.com/in/mikelly-correia-75b85a203/)
++ [Edilton Damasceno](https://www.linkedin.com/in/edilton-damasceno-1958b01a0/)
++ [Kelmer Passos](https://www.linkedin.com/in/kelmer-passos-988983144/)
 
 OBS: Os arquivos .sim1 são para o simulador Simulide

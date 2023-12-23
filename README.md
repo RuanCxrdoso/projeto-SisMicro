@@ -1,6 +1,6 @@
 # Projeto de Sistemas Microprocessados - Universidade Federal da Bahia 📚
 
-![Project Logo](./public/preview1.jpg)
+![Project](./public/preview1.jpg)
 # Instrumentação de um Robô Diferencial 🤖
 
 > ## Descrição 📚
@@ -72,7 +72,11 @@ Foram utilizadas as seguintes tecnologias neste projeto:
 
 > ## Printscreen do Projeto 📸
 ## Esquema exemplo do Circuito
-![Project Logo](./public/preview2.jpg)
+![Project](./public/preview2.jpg)
+## Esquema exemplo do Circuito
+![Simuacao](./public/simulacao.gif)
+Variando a distância detectada pelo sensor ultrassônico por meio de uma tensão aplicada nele, vemos que o sentido da rotação e velocidade dos motores DC são alterados, possibilitando que ele realize a manobra com intuito de desviar de um possível obstáculo à sua frente.
+
 
 <br>
 <br>

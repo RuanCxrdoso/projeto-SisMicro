@@ -77,7 +77,7 @@ Foram utilizadas as seguintes tecnologias neste projeto:
 <br>
 
 > ## Autores 📝
-+ [Ruan Cardoso](https://www.linkedin.com/in/ruancardosolinkdin/){:target="_blank"}
++ <a href="https://www.linkedin.com/in/ruancardosolinkdin/" target="_blank">Ruan Cardoso</a>
 + [Mikelly Correia](https://www.linkedin.com/in/ruancardosolinkdin/)
 + [Edilton Damasceno](https://www.linkedin.com/in/ruancardosolinkdin/)
 + [Kelmer Passos](https://www.linkedin.com/in/ruancardosolinkdin/)

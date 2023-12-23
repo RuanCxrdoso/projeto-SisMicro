@@ -73,7 +73,7 @@ Foram utilizadas as seguintes tecnologias neste projeto:
 > ## Printscreen do Projeto 📸
 ## Esquema exemplo do Circuito
 ![Project](./public/preview2.jpg)
-## Esquema exemplo do Circuito
+## Simulação
 ![Simuacao](./public/simulacao.gif)
 Variando a distância detectada pelo sensor ultrassônico por meio de uma tensão aplicada nele, vemos que o sentido da rotação e velocidade dos motores DC são alterados, possibilitando que ele realize a manobra com intuito de desviar de um possível obstáculo à sua frente.
 

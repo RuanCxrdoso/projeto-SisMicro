@@ -1,4 +1,4 @@
-# Projeto Semestral de Sistemas Microprocessados - Universidade Federal da Bahia 📚
+# Projeto de Sistemas Microprocessados - Universidade Federal da Bahia 📚
 
 ![Project Logo](./public/preview.png)
 # Instrumentação de um Robô Diferencial 🤖

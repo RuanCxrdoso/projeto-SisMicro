@@ -1,42 +1,58 @@
-/* 
- * File:   mainSensor.c
- * Author: ruanz
- *
- * Created on 24 de Novembro de 2023, 21:07
- */
-
+/*
+ *   
+ *      Programa usando a ATMega328p MCU para consulta ao sensor ultrassonico HC-SR04. 
+ *      Pin placement of ATMega328p:
+ *      Pin PC4				HC-SR04 Trig
+ *      Pin PC5				HC-SR04 Echo
+ */                             
 #define F_CPU 16000000UL
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/interrupt.h>
 
-#define TRIG_PIN PB0 // PINO 8 ARDUINO
-#define ECHO_PIN PB1 // PINO 9 ARDUINO
+/*******************************************INICIALIZANDO PORTAS, TEMPORIZADOR E INTERRUPÃ‡Ã•ES*******************************************/
+void init() {
+	DDRD |= (1<<DDD5);					// Define o pino D5 Como Saida
+	DDRC |= (1<<DDC4);					// Define o pino C4 Como Saida
+	DDRC &= ~(1<<DDC5);					// Define o pino C5 como entrada para ler o sinal do echo.
+	PORTC |= (1<<PORTC5);					// Habilitando o pull-up no pino C5.
+	PORTC &= ~(1<<PC4);					// Iniciando o pino C4 como baixo (Trig).
 
-long tempo, distancia;
+	PRR &= ~(1<<PRTIM1);					// Ativando o timer1;
+	TCNT1 = 0;						// Iniciando o valor do timer1
+	TCCR1B |= (1<<CS11);					// Habilitando o prescaller.
+	TCCR1B |= (1<<ICES1);					// Captura da borda de subida.
 
-int main(void) {
-  DDRB |= (1 << TRIG_PIN); // PINO TRIG COMO OUTPUT
-  DDRB &= ~(1 << ECHO_PIN); // PINO ECHO COMO INPUT
-
-  PORTB &= ~((1 << TRIG_PIN) | (1 << ECHO_PIN)); // Inicia ECHO e TRIG como nível lógico baixo
-
-  TCCR1A = 0x00;
-  TCCR1B |= ((1 << CS11) & (1 << CS10)); // Ajusta o prescaler em 1:64 -> (64 / 16mHz) * 1m = 4ms
-  
-  while(1) {
-	// Envio do pulso de 10ms no pino TRIG
-	PORTB |= (1 << TRIG_PIN);
-	_delay_us(10);
-	PORTB &= ~(1 << TRIG_PIN);
-	
-	while((PINB & (1 << ECHO_PIN)) == 0); // Não avança enquanto o ECHO estiver em nível lógico baixo
-	TCNT1 = 0; // Inicia a contagem quando o ECHO sobre para nível lógico alto
-	while(PINB & (1 << ECHO_PIN)); // Não avança enquanto o ECHO estiver em nível lógico alto
-	
-	tempo = TCNT1 * 4.0; // Converte em microssegundos
-	distancia = tempo / 58.0; // Converte o tempo em distância em centímetros
-  }
+	PCICR = (1<<PCIE1);					// Habilitando o PCINT[14:8] usando o pino C5 que Ã© o PCINY13.
+	PCMSK1 = (1<<PCINT13);					// Habilitando interrupÃ§Ã£o C5
+	sei();							// Habilitando interrupÃ§Ãµes globais
 }
 
-
+/*******************************************PROGRAMA PRINCIPAL*******************************************/
+int main() {
+	init();
+	while (1) {;
+		_delay_ms(60); 							// Para criar um atraso entre as consultas.
+		PORTC |= (1<<PC4);						// Definindo o Trig como alto.
+		_delay_us(10);							// Espera 10 microsegundos.
+		PORTC &= ~(1<<PC4);						// Volta o pino Trig para nivel baixo.
+	}
+}
+/*******************************************INTURRUPÃ‡ÃƒO PCINT1 PARA O PINO C5*******************************************/
+ISR(PCINT1_vect) {
+	if (bit_is_set(PINC,PC5)) {	  					// Checando se o pino echo estÃ¡ em estado alto.
+		TCNT1 = 0;							// Zerando o timer.
+	} else {
+		long numuS = TCNT1/2;						// Salvando o valor do timer.
+		uint8_t oldSREG = SREG;
+		cli();
+		long distancia = numuS/58;
+		SREG = oldSREG;							// Habilitando interrupÃ§Ãµes.
+		if (distancia < 30){
+				PORTD |= (1 << PORTD5);
+		} else {
+				PORTD &= ~(1 << PORTD5);
+		}
+	}
+}
